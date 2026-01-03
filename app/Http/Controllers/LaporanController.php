@@ -82,7 +82,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate parameters
         $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
         $request->validate([
@@ -121,7 +121,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate parameters
         $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
         $request->validate([
@@ -160,7 +160,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate parameters
         $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
         $request->validate([

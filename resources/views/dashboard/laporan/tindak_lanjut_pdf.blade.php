@@ -234,7 +234,6 @@
                     <th class="rekomendasi-column">REKOMENDASI_SARAN</th>
                     <th class="tindak-column">TINDAK LANJUT</th>
                     <th class="status-column">STATUS</th>
-                    <th class="keterangan-column">KETERANGAN</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,7 +249,6 @@
                     <td class="rekomendasi-column">{{ $tindakLanjut->rekomendasi_saran ?? '-' }}</td>
                     <td class="tindak-column">{{ $tindakLanjut->tindak_lanjut ?? '-' }}</td>
                     <td class="status-column">{{ $tindakLanjut->status ?? '-' }}</td>
-                    <td class="keterangan-column">{{ $tindakLanjut->keterangan ?? '-' }}</td>
                 </tr>
                 @endforeach
             </tbody>
