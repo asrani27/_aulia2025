@@ -42,9 +42,8 @@
                         Bulan <span class="text-red-500" id="bulanRequired">*</span>
                     </label>
                     <select name="bulan" id="bulan" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('bulan') border-red-500 @enderror" 
-                            required>
-                        <option value="">-- Pilih Bulan --</option>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent @error('bulan') border-red-500 @enderror">
+                        <option value="">-- Pilih Bulan (Opsional) --</option>
                         <option value="1" @if(old('bulan') == 1) selected @endif>Januari</option>
                         <option value="2" @if(old('bulan') == 2) selected @endif>Februari</option>
                         <option value="3" @if(old('bulan') == 3) selected @endif>Maret</option>
@@ -161,13 +160,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show date fields for other report types
             bulanField.style.display = 'block';
             tahunField.style.display = 'block';
-            bulanRequired.style.display = 'inline';
             tahunRequired.style.display = 'inline';
-            bulanSelect.setAttribute('required', 'required');
+            bulanRequired.style.display = 'none'; // Make bulan optional
+            bulanSelect.removeAttribute('required');
             tahunSelect.setAttribute('required', 'required');
             
             // Update info text
-            infoText.textContent = 'Pilih periode (bulan dan tahun) serta jenis laporan yang ingin Anda generate. Laporan akan berisi data sesuai dengan filter yang dipilih dan dapat diunduh dalam format PDF.';
+            infoText.textContent = 'Pilih tahun (wajib) dan bulan (opsional). Jika hanya tahun yang dipilih, laporan akan menampilkan data untuk seluruh tahun tersebut. Laporan dapat diunduh dalam format PDF.';
         }
     }
     
@@ -193,10 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // For non-Tim Audit reports, validate date fields
+        // For non-Tim Audit reports, validate year field (bulan is optional)
         if (jenisLaporan !== 'tim_audit') {
-            if (!bulan || !tahun) {
-                alert('Silakan lengkapi bulan dan tahun');
+            if (!tahun) {
+                alert('Silakan pilih tahun');
                 return;
             }
         }
@@ -212,13 +211,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = `{{ route('laporan.tim-audit.pdf') }}`;
             window.location.href = url;
         } else if (jenisLaporan === 'jadwal_audit') {
-            const url = `{{ route('laporan.jadwal-audit.pdf') }}?bulan=${bulan}&tahun=${tahun}`;
+            let url = `{{ route('laporan.jadwal-audit.pdf') }}?tahun=${tahun}`;
+            if (bulan) {
+                url += `&bulan=${bulan}`;
+            }
             window.location.href = url;
         } else if (jenisLaporan === 'pemeriksaan') {
-            const url = `{{ route('laporan.pemeriksaan.pdf') }}?bulan=${bulan}&tahun=${tahun}`;
+            let url = `{{ route('laporan.pemeriksaan.pdf') }}?tahun=${tahun}`;
+            if (bulan) {
+                url += `&bulan=${bulan}`;
+            }
             window.location.href = url;
         } else if (jenisLaporan === 'tindak_lanjut') {
-            const url = `{{ route('laporan.tindak-lanjut.pdf') }}?bulan=${bulan}&tahun=${tahun}`;
+            let url = `{{ route('laporan.tindak-lanjut.pdf') }}?tahun=${tahun}`;
+            if (bulan) {
+                url += `&bulan=${bulan}`;
+            }
             window.location.href = url;
         } else {
             // For other report types, submit the form normally

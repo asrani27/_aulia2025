@@ -25,7 +25,7 @@ class LaporanController extends Controller
     public function exportPdf(Request $request)
     {
         $request->validate([
-            'bulan' => 'required|integer|between:1,12',
+            'bulan' => 'nullable|integer|between:1,12',
             'tahun' => 'required|integer|min:2020|max:' . (date('Y') + 1),
             'jenis_laporan' => 'required|in:tim_audit,jadwal_audit,pemeriksaan,tindak_lanjut',
         ]);
@@ -39,8 +39,10 @@ class LaporanController extends Controller
 
         // For now, return a simple response (PDF generation would require additional packages)
         // In a real implementation, you would use dompdf or similar package
+        $periodeText = $bulan ? $this->getMonthName($bulan) . ' ' . $tahun : 'Tahun ' . $tahun;
+        
         return response()->json([
-            'message' => 'Laporan ' . $this->getReportTitle($jenisLaporan) . ' periode ' . $this->getMonthName($bulan) . ' ' . $tahun . ' berhasil dibuat',
+            'message' => 'Laporan ' . $this->getReportTitle($jenisLaporan) . ' periode ' . $periodeText . ' berhasil dibuat',
             'data' => $data,
             'bulan' => $bulan,
             'tahun' => $tahun,
@@ -64,8 +66,10 @@ class LaporanController extends Controller
         // Generate PDF using DOMPDF
         $pdf = Pdf::loadView('dashboard.laporan.tim_audit_pdf', compact('timAudits', 'tanggal'));
 
-        // Set paper size and orientation
-        $pdf->setPaper('A4', 'landscape');
+        // Set custom paper size (longer than A4 landscape)
+        // A4 landscape: 297mm x 210mm = 842pts x 595pts
+        // Custom: 400mm x 210mm = 1134pts x 595pts (more space for content)
+        $pdf->setPaper([0, 0, 1134, 595], 'landscape');
 
         // Set filename
         $filename = 'Laporan_Tim_Audit_Semua_Data.pdf';
@@ -82,20 +86,24 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-
-        // Validate parameters
-        $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
+        
+        // Validate tahun (required) and bulan (optional)
+        $request->merge(['tahun' => $tahun]);
         $request->validate([
-            'bulan' => 'required|integer|between:1,12',
             'tahun' => 'required|integer|min:2020|max:' . (date('Y') + 1),
+            'bulan' => 'nullable|integer|between:1,12',
         ]);
 
-        // Get Jadwal Audit data for the specified period
-        $jadwalAudits = JadwalAudit::with(['timAudit'])
-            ->whereMonth('tgl_audit', $bulan)
-            ->whereYear('tgl_audit', $tahun)
-            ->orderBy('tgl_audit')
-            ->get();
+        // Get Jadwal Audit data for specified period
+        $query = JadwalAudit::with(['timAudit'])
+            ->whereYear('tgl_audit', $tahun);
+            
+        // Add month filter only if bulan is specified
+        if ($bulan) {
+            $query->whereMonth('tgl_audit', $bulan);
+        }
+        
+        $jadwalAudits = $query->orderBy('tgl_audit')->get();
 
         // Format tanggal untuk laporan (current date)
         $tanggal = date('d-m-Y');
@@ -103,11 +111,17 @@ class LaporanController extends Controller
         // Generate PDF using DOMPDF
         $pdf = Pdf::loadView('dashboard.laporan.jadwal_audit_pdf', compact('jadwalAudits', 'bulan', 'tahun', 'tanggal'));
 
-        // Set paper size and orientation
-        $pdf->setPaper('A4', 'landscape');
+        // Set custom paper size (longer than A4 landscape)
+        // A4 landscape: 297mm x 210mm = 842pts x 595pts
+        // Custom: 400mm x 210mm = 1134pts x 595pts (more space for content)
+        $pdf->setPaper([0, 0, 1134, 595], 'landscape');
 
         // Set filename
-        $filename = 'Laporan_Jadwal_Audit_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        if ($bulan) {
+            $filename = 'Laporan_Jadwal_Audit_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        } else {
+            $filename = 'Laporan_Jadwal_Audit_Tahun_' . $tahun . '.pdf';
+        }
 
         // Download the PDF
         return $pdf->stream($filename);
@@ -121,20 +135,24 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-
-        // Validate parameters
-        $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
+        
+        // Validate tahun (required) and bulan (optional)
+        $request->merge(['tahun' => $tahun]);
         $request->validate([
-            'bulan' => 'required|integer|between:1,12',
             'tahun' => 'required|integer|min:2020|max:' . (date('Y') + 1),
+            'bulan' => 'nullable|integer|between:1,12',
         ]);
 
         // Get Pemeriksaan data for the specified period
-        $pemeriksaans = Pemeriksaan::with(['jadwalAudit'])
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy('tanggal')
-            ->get();
+        $query = Pemeriksaan::with(['jadwalAudit'])
+            ->whereYear('tanggal', $tahun);
+            
+        // Add month filter only if bulan is specified
+        if ($bulan) {
+            $query->whereMonth('tanggal', $bulan);
+        }
+        
+        $pemeriksaans = $query->orderBy('tanggal')->get();
 
         // Format tanggal untuk laporan (current date)
         $tanggal = date('d-m-Y');
@@ -142,11 +160,17 @@ class LaporanController extends Controller
         // Generate PDF using DOMPDF
         $pdf = Pdf::loadView('dashboard.laporan.pemeriksaan_pdf', compact('pemeriksaans', 'bulan', 'tahun', 'tanggal'));
 
-        // Set paper size and orientation
-        $pdf->setPaper('A4', 'landscape');
+        // Set custom paper size (longer than A4 landscape)
+        // A4 landscape: 297mm x 210mm = 842pts x 595pts
+        // Custom: 400mm x 210mm = 1134pts x 595pts (more space for content)
+        $pdf->setPaper([0, 0, 1134, 595], 'landscape');
 
         // Set filename
-        $filename = 'Laporan_Pemeriksaan_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        if ($bulan) {
+            $filename = 'Laporan_Pemeriksaan_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        } else {
+            $filename = 'Laporan_Pemeriksaan_Tahun_' . $tahun . '.pdf';
+        }
 
         // Download the PDF
         return $pdf->stream($filename);
@@ -160,20 +184,24 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-
-        // Validate parameters
-        $request->merge(['bulan' => $bulan, 'tahun' => $tahun]);
+        
+        // Validate tahun (required) and bulan (optional)
+        $request->merge(['tahun' => $tahun]);
         $request->validate([
-            'bulan' => 'required|integer|between:1,12',
             'tahun' => 'required|integer|min:2020|max:' . (date('Y') + 1),
+            'bulan' => 'nullable|integer|between:1,12',
         ]);
 
         // Get Tindak Lanjut data for the specified period
-        $tindakLanjuts = TindakLanjut::with(['pemeriksaan.jadwalAudit'])
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy('tanggal')
-            ->get();
+        $query = TindakLanjut::with(['pemeriksaan.jadwalAudit'])
+            ->whereYear('tanggal', $tahun);
+            
+        // Add month filter only if bulan is specified
+        if ($bulan) {
+            $query->whereMonth('tanggal', $bulan);
+        }
+        
+        $tindakLanjuts = $query->orderBy('tanggal')->get();
 
         // Format tanggal untuk laporan (current date)
         $tanggal = date('d-m-Y');
@@ -181,11 +209,17 @@ class LaporanController extends Controller
         // Generate PDF using DOMPDF
         $pdf = Pdf::loadView('dashboard.laporan.tindak_lanjut_pdf', compact('tindakLanjuts', 'bulan', 'tahun', 'tanggal'));
 
-        // Set paper size and orientation
-        $pdf->setPaper('A4', 'landscape');
+        // Set custom paper size (longer than A4 landscape)
+        // A4 landscape: 297mm x 210mm = 842pts x 595pts
+        // Custom: 400mm x 210mm = 1134pts x 595pts (more space for content)
+        $pdf->setPaper([0, 0, 1134, 595], 'landscape');
 
         // Set filename
-        $filename = 'Laporan_Tindak_Lanjut_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        if ($bulan) {
+            $filename = 'Laporan_Tindak_Lanjut_' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '_' . $tahun . '.pdf';
+        } else {
+            $filename = 'Laporan_Tindak_Lanjut_Tahun_' . $tahun . '.pdf';
+        }
 
         // Download the PDF
         return $pdf->stream($filename);
@@ -203,22 +237,34 @@ class LaporanController extends Controller
                     ->get();
 
             case 'jadwal_audit':
-                return JadwalAudit::with(['timAudit'])
-                    ->whereMonth('tgl_audit', $bulan)
-                    ->whereYear('tgl_audit', $tahun)
-                    ->get();
+                $query = JadwalAudit::with(['timAudit'])
+                    ->whereYear('tgl_audit', $tahun);
+                    
+                if ($bulan) {
+                    $query->whereMonth('tgl_audit', $bulan);
+                }
+                
+                return $query->orderBy('tgl_audit')->get();
 
             case 'pemeriksaan':
-                return Pemeriksaan::with(['jadwalAudit'])
-                    ->whereMonth('tanggal', $bulan)
-                    ->whereYear('tanggal', $tahun)
-                    ->get();
+                $query = Pemeriksaan::with(['jadwalAudit'])
+                    ->whereYear('tanggal', $tahun);
+                    
+                if ($bulan) {
+                    $query->whereMonth('tanggal', $bulan);
+                }
+                
+                return $query->orderBy('tanggal')->get();
 
             case 'tindak_lanjut':
-                return TindakLanjut::with(['pemeriksaan.jadwalAudit'])
-                    ->whereMonth('tanggal', $bulan)
-                    ->whereYear('tanggal', $tahun)
-                    ->get();
+                $query = TindakLanjut::with(['pemeriksaan.jadwalAudit'])
+                    ->whereYear('tanggal', $tahun);
+                    
+                if ($bulan) {
+                    $query->whereMonth('tanggal', $bulan);
+                }
+                
+                return $query->orderBy('tanggal')->get();
 
             default:
                 return collect([]);
