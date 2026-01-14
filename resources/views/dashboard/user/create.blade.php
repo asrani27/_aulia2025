@@ -81,6 +81,7 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
                         <option value="">Pilih Role</option>
                         <option value="admin" {{ old('role')==='admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="pimpinan" {{ old('role')==='pimpinan' ? 'selected' : '' }}>Pimpinan</option>
                     </select>
                     @error('role')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

@@ -7,8 +7,8 @@
     <title>Laporan Tim Audit Inspektorat Daerah</title>
     <style>
         @page {
-            margin: 40px;
-            size: A4 landscape;
+            size: 40cm 25cm;
+            margin: 1cm;
         }
 
         body {
@@ -226,14 +226,14 @@
         <table>
             <thead>
                 <tr>
-                    <th class="no-column">NO</th>
-                    <th class="instansi-column">INSTANSI</th>
-                    <th class="tanggal-pemeriksaan-column">TANGGAL PEMERIKSAAN</th>
-                    <th class="tanggal-tindak-column">TANGGAL TINDAK LANJUT</th>
-                    <th class="uraian-column">URAIAN</th>
-                    <th class="rekomendasi-column">REKOMENDASI_SARAN</th>
-                    <th class="tindak-column">TINDAK LANJUT</th>
-                    <th class="status-column">STATUS</th>
+                    <th class="no-column" style="width:10px">NO</th>
+                    <th class="instansi-column" style="width:15px">Instansi</th>
+                    <th class="tanggal-pemeriksaan-column" style="width:15px">Tanggal Pemeriksaan</th>
+                    <th class="tanggal-tindak-column" style="width:35px">Tanggal Tindak_Lanjut</th>
+                    <th class="uraian-column" style="width:400px">Uraian</th>
+                    <th class="rekomendasi-column" style="width:15px">Rekomendasi/Saran</th>
+                    <th class="tindak-column" style="width:400px">Tindak Lanjut</th>
+                    <th class="status-column" style="width:15px">Status</th>
                 </tr>
             </thead>
             <tbody>

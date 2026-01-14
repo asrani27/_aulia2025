@@ -24,6 +24,59 @@
     </div>
 
     <!-- Stats Cards -->
+    @if(auth()->user()->role === 'pimpinan')
+    <!-- Pimpinan Dashboard - Simplified View -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="card-hover bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Jadwal Audit</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalJadwalAudit }}</p>
+                    <p class="text-xs text-orange-600 mt-2">
+                        <i class="fas fa-calendar-alt"></i> Total Jadwal
+                    </p>
+                </div>
+                <div
+                    class="w-14 h-14 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-calendar-alt text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-hover bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Pemeriksaan</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalPemeriksaan }}</p>
+                    <p class="text-xs text-cyan-600 mt-2">
+                        <i class="fas fa-search"></i> Total Pemeriksaan
+                    </p>
+                </div>
+                <div
+                    class="w-14 h-14 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-search text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-hover bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Tindak Lanjut</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $totalTindakLanjut }}</p>
+                    <p class="text-xs text-red-600 mt-2">
+                        <i class="fas fa-tasks"></i> Total Tindak Lanjut
+                    </p>
+                </div>
+                <div
+                    class="w-14 h-14 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-tasks text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
+    <!-- Admin/Other Roles Dashboard -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
         <!-- Users Card -->
         @if(auth()->user()->role === 'admin')
@@ -129,6 +182,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Quick Actions & Recent Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

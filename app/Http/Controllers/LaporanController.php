@@ -40,7 +40,7 @@ class LaporanController extends Controller
         // For now, return a simple response (PDF generation would require additional packages)
         // In a real implementation, you would use dompdf or similar package
         $periodeText = $bulan ? $this->getMonthName($bulan) . ' ' . $tahun : 'Tahun ' . $tahun;
-        
+
         return response()->json([
             'message' => 'Laporan ' . $this->getReportTitle($jenisLaporan) . ' periode ' . $periodeText . ' berhasil dibuat',
             'data' => $data,
@@ -86,7 +86,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate tahun (required) and bulan (optional)
         $request->merge(['tahun' => $tahun]);
         $request->validate([
@@ -97,12 +97,12 @@ class LaporanController extends Controller
         // Get Jadwal Audit data for specified period
         $query = JadwalAudit::with(['timAudit'])
             ->whereYear('tgl_audit', $tahun);
-            
+
         // Add month filter only if bulan is specified
         if ($bulan) {
             $query->whereMonth('tgl_audit', $bulan);
         }
-        
+
         $jadwalAudits = $query->orderBy('tgl_audit')->get();
 
         // Format tanggal untuk laporan (current date)
@@ -135,7 +135,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate tahun (required) and bulan (optional)
         $request->merge(['tahun' => $tahun]);
         $request->validate([
@@ -146,12 +146,12 @@ class LaporanController extends Controller
         // Get Pemeriksaan data for the specified period
         $query = Pemeriksaan::with(['jadwalAudit'])
             ->whereYear('tanggal', $tahun);
-            
+
         // Add month filter only if bulan is specified
         if ($bulan) {
             $query->whereMonth('tanggal', $bulan);
         }
-        
+
         $pemeriksaans = $query->orderBy('tanggal')->get();
 
         // Format tanggal untuk laporan (current date)
@@ -184,7 +184,7 @@ class LaporanController extends Controller
         // Get parameters from both GET and POST
         $bulan = $request->input('bulan') ?: $request->query('bulan');
         $tahun = $request->input('tahun') ?: $request->query('tahun');
-        
+
         // Validate tahun (required) and bulan (optional)
         $request->merge(['tahun' => $tahun]);
         $request->validate([
@@ -195,12 +195,12 @@ class LaporanController extends Controller
         // Get Tindak Lanjut data for the specified period
         $query = TindakLanjut::with(['pemeriksaan.jadwalAudit'])
             ->whereYear('tanggal', $tahun);
-            
+
         // Add month filter only if bulan is specified
         if ($bulan) {
             $query->whereMonth('tanggal', $bulan);
         }
-        
+
         $tindakLanjuts = $query->orderBy('tanggal')->get();
 
         // Format tanggal untuk laporan (current date)
@@ -209,10 +209,7 @@ class LaporanController extends Controller
         // Generate PDF using DOMPDF
         $pdf = Pdf::loadView('dashboard.laporan.tindak_lanjut_pdf', compact('tindakLanjuts', 'bulan', 'tahun', 'tanggal'));
 
-        // Set custom paper size (longer than A4 landscape)
-        // A4 landscape: 297mm x 210mm = 842pts x 595pts
-        // Custom: 400mm x 210mm = 1134pts x 595pts (more space for content)
-        $pdf->setPaper([0, 0, 1134, 595], 'landscape');
+        $pdf->setPaper('a4', 'landscape');
 
         // Set filename
         if ($bulan) {
@@ -239,31 +236,31 @@ class LaporanController extends Controller
             case 'jadwal_audit':
                 $query = JadwalAudit::with(['timAudit'])
                     ->whereYear('tgl_audit', $tahun);
-                    
+
                 if ($bulan) {
                     $query->whereMonth('tgl_audit', $bulan);
                 }
-                
+
                 return $query->orderBy('tgl_audit')->get();
 
             case 'pemeriksaan':
                 $query = Pemeriksaan::with(['jadwalAudit'])
                     ->whereYear('tanggal', $tahun);
-                    
+
                 if ($bulan) {
                     $query->whereMonth('tanggal', $bulan);
                 }
-                
+
                 return $query->orderBy('tanggal')->get();
 
             case 'tindak_lanjut':
                 $query = TindakLanjut::with(['pemeriksaan.jadwalAudit'])
                     ->whereYear('tanggal', $tahun);
-                    
+
                 if ($bulan) {
                     $query->whereMonth('tanggal', $bulan);
                 }
-                
+
                 return $query->orderBy('tanggal')->get();
 
             default:

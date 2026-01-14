@@ -11,6 +11,7 @@ class Pemeriksaan extends Model
     protected $fillable = [
         'nomor',
         'jadwal_audit_id',
+        'jabatan_pemeriksa',
         'tanggal',
         'hasil_temuan',
         'keterangan',

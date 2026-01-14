@@ -7,9 +7,10 @@
     <title>Laporan Tim Audit Inspektorat Daerah</title>
     <style>
         @page {
-            margin: 40px;
-            size: A4 landscape;
+            size: 40cm 25cm;
+            margin: 1cm;
         }
+
 
         body {
             font-family: 'Times New Roman', serif;

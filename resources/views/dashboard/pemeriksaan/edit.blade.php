@@ -70,6 +70,23 @@
                 </div>
             </div>
 
+            <!-- Jabatan Pemeriksa -->
+            <div class="mb-6">
+                <label for="jabatan_pemeriksa" class="block text-sm font-medium text-gray-700 mb-2">
+                    Jabatan Pemeriksa <span class="text-red-500">*</span>
+                </label>
+                <select id="jabatan_pemeriksa" name="jabatan_pemeriksa" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                    <option value="">-- Pilih Jabatan Pemeriksa --</option>
+                    <option value="pengendali teknis" {{ old('jabatan_pemeriksa', $pemeriksaan->jabatan_pemeriksa) == 'pengendali teknis' ? 'selected' : '' }}>Pengendali Teknis</option>
+                    <option value="ketua tim" {{ old('jabatan_pemeriksa', $pemeriksaan->jabatan_pemeriksa) == 'ketua tim' ? 'selected' : '' }}>Ketua Tim</option>
+                    <option value="anggota" {{ old('jabatan_pemeriksa', $pemeriksaan->jabatan_pemeriksa) == 'anggota' ? 'selected' : '' }}>Anggota</option>
+                </select>
+                @error('jabatan_pemeriksa')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Tanggal Pemeriksaan -->
             <div class="mb-6">
                 <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-2">

@@ -50,7 +50,7 @@ class UserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,auditor,user'],
+            'role' => ['required', 'in:admin,pimpinan'],
         ]);
 
         User::create([
@@ -103,7 +103,7 @@ class UserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $user->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,auditor,user'],
+            'role' => ['required', 'in:admin,pimpinan'],
         ]);
 
         $updateData = [

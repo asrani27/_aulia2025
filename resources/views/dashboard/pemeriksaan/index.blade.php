@@ -37,9 +37,11 @@
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No Urut</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nomor</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Instansi</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Jabatan Pemeriksa</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tim Audit</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tanggal</th>
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Hasil Temuan</th>
+                        
                         <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -54,6 +56,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $item->jadwalAudit->nama_instansi }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                {{ ucfirst($item->jabatan_pemeriksa ?? '-') }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $item->jadwalAudit->timAudit->nama_tim }}</div>
@@ -94,7 +101,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                             <i class="fas fa-search text-4xl mb-3"></i>
                             <p class="text-lg">Belum ada data pemeriksaan</p>
                             <p class="text-sm mt-1">Tambah data pemeriksaan untuk memulai</p>

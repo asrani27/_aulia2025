@@ -33,6 +33,7 @@ class PemeriksaanController extends Controller
     {
         $request->validate([
             'jadwal_audit_id' => 'required|exists:jadwal_audit,id',
+            'jabatan_pemeriksa' => 'required|in:pengendali teknis,ketua tim,anggota',
             'tanggal' => 'required|date',
             'hasil_temuan' => 'required|string',
             'keterangan' => 'nullable|string',
@@ -69,6 +70,7 @@ class PemeriksaanController extends Controller
     {
         $request->validate([
             'jadwal_audit_id' => 'required|exists:jadwal_audit,id',
+            'jabatan_pemeriksa' => 'required|in:pengendali teknis,ketua tim,anggota',
             'tanggal' => 'required|date',
             'hasil_temuan' => 'required|string',
             'keterangan' => 'nullable|string',

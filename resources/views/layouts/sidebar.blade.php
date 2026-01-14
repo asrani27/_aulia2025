@@ -31,6 +31,7 @@
                     @endif
                 </a>
             </li>
+            @if(auth()->user()->role !== 'pimpinan')
             @if(auth()->user()->role === 'admin')
             <li>
                 <a href="{{ route('users.index') }}"
@@ -105,6 +106,7 @@
                     @endif
                 </a>
             </li>
+            @endif
             <li>
                 <a href="{{ route('laporan.index') }}"
                     class="sidebar-gradient-hover @if(request()->routeIs('laporan.*')) active @endif flex items-center p-3 rounded-lg text-gray-700 font-medium relative">
