@@ -230,8 +230,8 @@
                     <th class="instansi-column" style="width:15px">Instansi</th>
                     <th class="tanggal-pemeriksaan-column" style="width:15px">Tanggal Pemeriksaan</th>
                     <th class="tanggal-tindak-column" style="width:35px">Tanggal Tindak_Lanjut</th>
-                    <th class="uraian-column" style="width:400px">Uraian</th>
-                    <th class="rekomendasi-column" style="width:15px">Rekomendasi/Saran</th>
+                    <th class="uraian-column" style="width:300px">Uraian</th>
+                    <th class="rekomendasi-column" style="width:300px">Rekomendasi/Saran</th>
                     <th class="tindak-column" style="width:400px">Tindak Lanjut</th>
                     <th class="status-column" style="width:15px">Status</th>
                 </tr>
